@@ -1,0 +1,8 @@
+build/
+ENV/
+dumps/
+
+*.pyc
+*.swp
+
+settings.py
