@@ -32,7 +32,10 @@ class SentimentModel(object):
     @staticmethod
     def load(filename):
         "Load an existing model from the given filename"
-        return pickle.load(filename)
+        fd = open(filename, "rb")
+        model = pickle.load(fd)
+        fd.close()
+        return model
 
     def tokenize(self, text):
         """Splits a sentence into tokens
@@ -109,11 +112,11 @@ class SentimentModel(object):
         """
         label_probdist = self.estimator(self.label_freqdist)
         feature_probdist = {}
-        for ((label, fname), freqdist) in feature_freqdist.items():
-            probdist = estimator(freqdist, bins=len(feature_values[fname]))
+        for ((label, fname), freqdist) in self.feature_freqdist.items():
+            probdist = self.estimator(freqdist, bins=len(self.feature_values[fname]))
             feature_probdist[label,fname] = probdist
 
         classifier = nltk.NaiveBayesClassifier(label_probdist,
-                                               self.feature_probdist)
+                                               feature_probdist)
 
         return classifier.classify(self.extract_features(text))
