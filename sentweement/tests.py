@@ -6,6 +6,7 @@ import tempfile
 import unittest
 
 from sentweement import datareader
+from sentweement import learning
 from sentweement import tweet
 
 class TestTweets(unittest.TestCase):
@@ -93,6 +94,34 @@ class TestReader(unittest.TestCase):
         self.assertEqual(authors, [ "author%d" % i for i in range(1, 10) ])
         self.assertEqual(text, [ "text%d" % i for i in range(1, 10) ])
 
+
+class TestLearning(unittest.TestCase):
+    def setUp(self):
+        self.sentiment_model = learning.Sentiment()
+
+    def testTweetTokenization(self):
+        self.assertEqual(self.sentiment_model.tokenize("hello"),
+                         ["hello"])
+        self.assertEqual(self.sentiment_model.tokenize("hello world"),
+                         ["hello", "world"])
+        self.assertEqual(self.sentiment_model.tokenize("hello world :)"),
+                         ["hello", "world", ":)"])
+        self.assertEqual(self.sentiment_model.tokenize("hello... world..."),
+                         ["hello", "...", "world", "..."])
+        self.assertEqual(self.sentiment_model.tokenize("hello:) world:("),
+                         ["hello", ":)", "world", ":("])
+        self.assertEqual(self.sentiment_model.tokenize("hello...world..."),
+                         ["hello", "...", "world", "..."])
+        self.assertEqual(self.sentiment_model.tokenize("hello:-)world:-("),
+                         ["hello", ":-)", "world", ":-("])
+        self.assertEqual(self.sentiment_model.tokenize("@username: 1 2 3 hello"),
+                         ["@username", ":", "1", "2", "3", "hello"])
+        self.assertEqual(self.sentiment_model.tokenize("hello @username #hashtag!"),
+                         ["hello", "@username", "#hashtag", "!"])
+        self.assertEqual(self.sentiment_model.tokenize("@@@###"),
+                         ["@@@###"])
+        self.assertEqual(self.sentiment_model.tokenize("@username: the #hashtag!"),
+                         ["@username", ":", "the", "#hashtag", "!"])
 
 if __name__ == '__main__':
     unittest.main()
