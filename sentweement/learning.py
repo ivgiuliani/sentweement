@@ -1,11 +1,38 @@
-import nltk
+from collections import defaultdict
 
-class Sentiment(object):
+import nltk
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
+class SentimentModel(object):
     "Sentiment classifier for tweets"
+    TWITTER_USERNAME_PREFIX = "@"
+    TWITTER_HASHTAG_PREFIX = "#"
+    TWITTER_CHARS = "@#"
 
     SNT_POSITIVE = 1
     SNT_NEUTRAL  = 0
     SNT_NEGATIVE = -1
+
+    def __init__(self, estimator=nltk.probability.ELEProbDist):
+        self.estimator = estimator
+        self.label_freqdist = nltk.probability.FreqDist()
+        self.feature_freqdist = defaultdict(nltk.probability.FreqDist)
+        self.feature_values = defaultdict(set)
+        self.feature_names = set()
+
+    def save(self, filename):
+        "Serializes the current model to the specified file"
+        fd = open(filename, "wb")
+        pickle.dump(self, fd)
+        fd.close()
+
+    @staticmethod
+    def load(filename):
+        "Load an existing model from the given filename"
+        return pickle.load(filename)
 
     def tokenize(self, text):
         """Splits a sentence into tokens
@@ -15,19 +42,39 @@ class Sentiment(object):
         when it makes sense so that for example '@' and 'username' are
         always a single token
         """
-        TWITTER_CHARS = "#@"
 
         nltk_tokens = nltk.wordpunct_tokenize(text)
         tokens = []
         for tok1, tok2 in zip(nltk_tokens, nltk_tokens[1:]):
-            if tok1 in TWITTER_CHARS:
+            if tok1 in self.TWITTER_CHARS:
                 tokens.append(tok1 + tok2)
-            elif tok2 not in TWITTER_CHARS:
+            elif tok2 not in self.TWITTER_CHARS:
                 tokens.append(tok2) 
 
-        if len(nltk_tokens) > 0 and nltk_tokens[0] not in TWITTER_CHARS:
+        if len(nltk_tokens) > 0 and nltk_tokens[0] not in self.TWITTER_CHARS:
             tokens = [ nltk_tokens[0] ] + tokens
         return tokens
+
+    def extract_features(self, text):
+        "Extracts a set of features from the given tweet"
+        tokens = self.tokenize(text)
+        features = {}
+
+        for token in tokens:
+            if len(token) == 1:
+                # skip punctuation marks or single letters as they
+                # don't contribute much
+                continue
+
+            if token.startswith(tuple(self.TWITTER_CHARS)):
+                # skip @usernames and #hashtags
+                continue
+            features["has(%s)" % token] = True
+
+        for letter in "abcdefghijklmnopqrstuwxyz":
+            features["count(%s)" % letter] = text.lower().count(letter)
+
+        return features
 
     def fit(self, text, sentiment):
         """
@@ -35,7 +82,24 @@ class Sentiment(object):
         sentiment label. The sentiment must be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
-        pass
+        # mostly copied from nltk.NaiveBayesClassifier.train
+
+        features = self.extract_features(text)
+        self.label_freqdist.inc(sentiment)
+
+        for fname, f_val in features.iteritems():
+            self.feature_freqdist[sentiment, fname].inc(f_val)
+            self.feature_values[fname].add(f_val)
+            self.feature_names.add(fname)
+
+        # Assume None when a feature didn't have a value given for an
+        # instance (wrt the whole feature set)
+        for label in self.label_freqdist:
+            num_samples = self.label_freqdist[label]
+            for fname in self.feature_names:
+                count = self.feature_freqdist[label, fname].N()
+                self.feature_freqdist[label, fname].inc(None, num_samples-count)
+                self.feature_values[fname].add(None)
 
     def predict(self, text):
         """
@@ -43,4 +107,13 @@ class Sentiment(object):
         The predicted sentiment will be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
-        pass
+        label_probdist = self.estimator(self.label_freqdist)
+        feature_probdist = {}
+        for ((label, fname), freqdist) in feature_freqdist.items():
+            probdist = estimator(freqdist, bins=len(feature_values[fname]))
+            feature_probdist[label,fname] = probdist
+
+        classifier = nltk.NaiveBayesClassifier(label_probdist,
+                                               self.feature_probdist)
+
+        return classifier.classify(self.extract_features(text))
