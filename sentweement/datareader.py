@@ -7,11 +7,12 @@ class DataReader(object):
     def __init__(self, filenames=None):
         self._filenames = filenames or []
 
-        if not self._files_exist(self._filenames):
-            # check that the files exist before starting to avoid abrupt
-            # interruptions in the middle of a computation
-            err = "read error: %s doesn't exist or cannot be read"
-            raise IOError(err % filename)
+        for filename in self._filenames:
+            if not self._files_exist(self._filenames):
+                # check that the files exist before starting to avoid abrupt
+                # interruptions in the middle of a computation
+                err = "read error: %s doesn't exist or cannot be read"
+                raise IOError(err % filename)
 
     def get_tweets(self):
         "Iterates over the whole list of tweets available"
