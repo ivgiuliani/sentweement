@@ -100,6 +100,7 @@ class TestLearning(unittest.TestCase):
         self.sentiment_model = learning.Sentiment()
 
     def testTweetTokenization(self):
+        self.assertEqual(self.sentiment_model.tokenize(""), [])
         self.assertEqual(self.sentiment_model.tokenize("hello"),
                          ["hello"])
         self.assertEqual(self.sentiment_model.tokenize("hello world"),
