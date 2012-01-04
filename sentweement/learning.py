@@ -76,7 +76,7 @@ class SentimentModel(object):
             features["has(%s)" % token] = True
 
         for letter in "abcdefghijklmnopqrstuwxyz":
-            features["char_ratio(%s)" % letter] = text.lower().count(letter) / float(len(text))
+            features["high_char_ratio(%s)" % letter] = text.lower().count(letter) / float(len(text)) > 0.1
 
         return features
 
