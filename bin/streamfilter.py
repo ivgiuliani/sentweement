@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import sys
 
+from sentweement import auth
 from sentweement import settings
 from sentweement import stream
 from sentweement import language
-from sentweement.auth import get_auth_token
 
 def searchCB(status, filter_language):
     author =status.author.screen_name
@@ -28,8 +28,7 @@ def main(args):
 
     settings.use("settings.py")
 
-    auth = get_auth_token()
-    s = stream.SearchListener(auth, search, searchCB, cb_args=(language,))
+    s = stream.SearchListener(auth.auth(), search, searchCB, cb_args=(language,))
     try:
         s.run()
     except KeyboardInterrupt:

@@ -4,7 +4,7 @@ import sys
 
 import tweepy
 
-def _init():
+def auth():
     if not all([settings.CONSUMER_KEY, settings.CONSUMER_SECRET,
                 settings.OAUTH_ACCESS_TOKEN, settings.OAUTH_ACCESS_TOKEN_SECRET]):
         sys.stderr.write("WARNING: empty oauth settings, twitter auth will fail\n")
@@ -15,7 +15,3 @@ def _init():
                           settings.OAUTH_ACCESS_TOKEN_SECRET)
     return auth
 
-_auth = _init()
-
-def get_auth_token():
-    return _auth

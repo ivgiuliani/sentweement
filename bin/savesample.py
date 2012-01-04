@@ -3,10 +3,10 @@ import sys
 import time
 import csv
 
+from sentweement import auth
 from sentweement import settings
 from sentweement import stream
 from sentweement import language
-from sentweement.auth import get_auth_token
 
 class Analyzer(object):
     def __init__(self, language, count, output):
@@ -43,9 +43,8 @@ def main(args):
 
     settings.use("settings.py")
 
-    auth = get_auth_token()
     anal = Analyzer(language, count, output)
-    s = stream.SearchListener(auth, "", anal.cb_search)
+    s = stream.SearchListener(auth.auth(), "", anal.cb_search)
 
     try:
         s.run()
