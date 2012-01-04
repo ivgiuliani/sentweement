@@ -69,13 +69,14 @@ class SentimentModel(object):
                 # don't contribute much
                 continue
 
+            token = token.lower()
             if token.startswith(tuple(self.TWITTER_CHARS)):
                 # skip @usernames and #hashtags
                 continue
             features["has(%s)" % token] = True
 
         for letter in "abcdefghijklmnopqrstuwxyz":
-            features["count(%s)" % letter] = text.lower().count(letter)
+            features["char_ratio(%s)" % letter] = text.lower().count(letter) / float(len(text))
 
         return features
 
@@ -90,9 +91,9 @@ class SentimentModel(object):
         features = self.extract_features(text)
         self.label_freqdist.inc(sentiment)
 
-        for fname, f_val in features.iteritems():
-            self.feature_freqdist[sentiment, fname].inc(f_val)
-            self.feature_values[fname].add(f_val)
+        for fname, fval in features.iteritems():
+            self.feature_freqdist[sentiment, fname].inc(fval)
+            self.feature_values[fname].add(fval)
             self.feature_names.add(fname)
 
         # Assume None when a feature didn't have a value given for an
@@ -104,19 +105,20 @@ class SentimentModel(object):
                 self.feature_freqdist[label, fname].inc(None, num_samples-count)
                 self.feature_values[fname].add(None)
 
+    def get_classifier(self):
+        label_probdist = self.estimator(self.label_freqdist)
+        feature_probdist = {}
+        for ((label, fname), freqdist) in self.feature_freqdist.iteritems():
+            probdist = self.estimator(freqdist, bins=len(self.feature_values[fname]))
+            feature_probdist[label,fname] = probdist
+
+        return nltk.NaiveBayesClassifier(label_probdist, feature_probdist)
+
     def predict(self, text):
         """
         Returns the predicted sentiment for the given tweet's text.
         The predicted sentiment will be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
-        label_probdist = self.estimator(self.label_freqdist)
-        feature_probdist = {}
-        for ((label, fname), freqdist) in self.feature_freqdist.items():
-            probdist = self.estimator(freqdist, bins=len(self.feature_values[fname]))
-            feature_probdist[label,fname] = probdist
 
-        classifier = nltk.NaiveBayesClassifier(label_probdist,
-                                               feature_probdist)
-
-        return classifier.classify(self.extract_features(text))
+        return self.get_classifier().classify(self.extract_features(text))
