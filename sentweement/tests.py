@@ -97,7 +97,7 @@ class TestReader(unittest.TestCase):
 
 class TestLearning(unittest.TestCase):
     def setUp(self):
-        self.sentiment_model = learning.Sentiment()
+        self.sentiment_model = learning.SentimentModel()
 
     def testTweetTokenization(self):
         self.assertEqual(self.sentiment_model.tokenize(""), [])
