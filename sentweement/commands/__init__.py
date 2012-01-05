@@ -21,7 +21,7 @@ VALID_COMMANDS = {
         "params": "<input model> <input dataset 1> [... <input dataset N>]",
         "module": model.UpdateModelCommand,
     },
-    "predict": {
+    "predict-single": {
         "help": "Predict the label for the given sentence",
         "params": "<model> <sentence>",
         "module": prediction.PredictSingleCommand,
