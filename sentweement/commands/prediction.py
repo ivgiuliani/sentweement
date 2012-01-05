@@ -87,8 +87,9 @@ class EvaluateCommand(BaseCommand):
         cm = nltk.ConfusionMatrix(gold, test)
         print(cm.pp(sort_by_count=True, show_percents=True))
 
-
+        summary = {}
         for sentiment, label in TEXT_LABELS.items():
+            summary[label] = {}
             true_positives = 0
             true_negatives = 0
             false_positives = 0
@@ -104,18 +105,31 @@ class EvaluateCommand(BaseCommand):
                 elif gold_item == sentiment and gold_item != test_item:
                     false_negatives += 1
 
-            print("Class: %s" % label)
-            print("  true-positives: %d" % true_positives)
-            print("  true-negatives: %d" % true_negatives)
-            print("  false-positives: %d" % false_positives)
-            print("  false-negatives: %d" % false_negatives)
-
             precision = (true_positives / float((true_positives + false_positives)))
             recall = (true_positives / float((true_positives + false_negatives)))
             fmeasure = (2 * precision * recall) / (precision + recall)
 
-            print("  precision: %2.5f" % precision)
-            print("  recall: %2.5f" % recall)
-            print("  f-measure: %2.5f\n" % fmeasure)
+            summary[label]["true-positives"] = true_positives
+            summary[label]["true-negatives"] = true_negatives
+            summary[label]["false-positives"] = false_positives
+            summary[label]["false-negatives"] = false_negatives
+            summary[label]["precision"] = precision
+            summary[label]["recall"] = recall
+            summary[label]["f-measure"] = fmeasure
+
+        labels = TEXT_LABELS.values()
+        print("                TP     FP     TN     FP  precision  recall  f-measure")
+        for label in labels:
+            out = "%(label)s %(tp)6d %(tn)6d %(fp)6d %(fn)6d  %(precision)2.5f   %(recall)2.5f   %(fmeasure)2.5f" % {
+                "label": '%s:' % label.rjust(10),
+                "tp": summary[label]["true-positives"],
+                "fp": summary[label]["false-positives"],
+                "tn": summary[label]["true-negatives"],
+                "fn": summary[label]["false-negatives"],
+                "precision": summary[label]["precision"],
+                "recall": summary[label]["recall"],
+                "fmeasure": summary[label]["f-measure"],
+            }
+            print(out)
 
         return False
