@@ -9,4 +9,8 @@ class HelpCommand(BaseCommand):
 
         for command in commands:
             help_text = commands[command]["help"]
-            print "{0:>{width}}  {1}".format(command, help_text, width=command_width)
+            parameters = commands[command]["params"]
+
+            print("{0:>{width}}  {1}".format(command, help_text, width=command_width))
+            if parameters:
+                print("{0:{width}}  Parameters: {1}".format("", parameters, width=command_width))
