@@ -6,6 +6,11 @@ from sentweement.commands.base import BaseCommand, InvalidParameters
 import sys
 
 class CreateModelCommand(BaseCommand):
+    """
+    Create a new sentiment model using the given datasets as input.
+    If a model with the same name already exists, it will be overwritten.
+    """
+
     def train_over_dumps(self, filenames):
         model = SentimentModel()
         reader = DataReader(filenames)
@@ -32,6 +37,11 @@ class CreateModelCommand(BaseCommand):
         return False
 
 class UpdateModelCommand(BaseCommand):
+    """
+    Update a new sentiment model using the given datasets as input.
+    If the model doesn't exist yet, a new one will be created.
+    """
+
     def train_over_dumps(self, model_file, filenames):
         model = SentimentModel.load(model_file)
         reader = DataReader(filenames)
