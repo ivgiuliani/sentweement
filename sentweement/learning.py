@@ -1,3 +1,5 @@
+from sentweement import tweet
+
 from collections import defaultdict
 
 import nltk
@@ -58,8 +60,11 @@ class SentimentModel(object):
             tokens = [ nltk_tokens[0] ] + tokens
         return tokens
 
-    def extract_features(self, text):
+    def extract_features(self, tweet_obj):
         "Extracts a set of features from the given tweet"
+        text = tweet.fix(tweet_obj["text"])
+        text = tweet.remove_urls(text)
+
         tokens = self.tokenize(text)
         features = {}
 
@@ -80,15 +85,18 @@ class SentimentModel(object):
 
         return features
 
-    def fit(self, text, sentiment):
+    def fit(self, tweet_obj):
         """
-        Updates the model by adding the given text with the tagged
+        Updates the model by adding the given tweet with the tagged
         sentiment label. The sentiment must be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
-        # mostly copied from nltk.NaiveBayesClassifier.train
+        sentiment = int(tweet_obj["sentiment"])
 
-        features = self.extract_features(text)
+        # the following implementation is mostly copied from
+        # nltk.NaiveBayesClassifier.train, but allows for incremental
+        # training over the dataset
+        features = self.extract_features(tweet_obj)
         self.label_freqdist.inc(sentiment)
 
         for fname, fval in features.iteritems():
@@ -114,11 +122,14 @@ class SentimentModel(object):
 
         return nltk.NaiveBayesClassifier(label_probdist, feature_probdist)
 
-    def predict(self, text):
+    def predict(self, tweet_obj):
         """
         Returns the predicted sentiment for the given tweet's text.
         The predicted sentiment will be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
+        if isinstance(tweet_obj, (str, unicode)):
+            # allow direct text passing for easier testing
+            tweet_obj = { "text": tweet_obj }
 
         return self.get_classifier().classify(self.extract_features(text))

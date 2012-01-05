@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 
+from sentweement import tweet
 from sentweement.datareader import DataReader
 from sentweement.learning import SentimentModel
 
@@ -9,7 +10,7 @@ def train_over_dumps(filenames):
     reader = DataReader(filenames)
 
     for tweet in reader.get_tweets():
-        model.fit(tweet["text"], tweet["sentiment"])
+        model.fit(tweet)
 
     return model
 
