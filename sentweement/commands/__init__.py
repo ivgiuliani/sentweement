@@ -1,5 +1,6 @@
 from sentweement.commands import helpcmd
 from sentweement.commands import model
+from sentweement.commands import prediction
 from sentweement.commands import twitter
 
 __all__ = [ "run_command", "get_commands" ]
@@ -20,7 +21,11 @@ VALID_COMMANDS = {
         "params": "<input model> <input dataset 1> [... <input dataset N>]",
         "module": model.UpdateModelCommand,
     },
-    "predict": None,
+    "predict": {
+        "help": "Predict the label for the given sentence",
+        "params": "<model> <sentence>",
+        "module": prediction.PredictSingleCommand,
+    },
     "predict-batch": None,
     "twitter-search": {
         "help": "Show the current stream of tweets that matches the search terms",
