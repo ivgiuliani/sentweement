@@ -90,7 +90,7 @@ class SearchTweetsCommand(BaseCommand):
         except (IndexError, ValueError):
             raise InvalidParameters
 
-        search_terms = args[1:]
+        search_terms = arguments[1:]
         if not search_terms:
             raise InvalidParameters
 
