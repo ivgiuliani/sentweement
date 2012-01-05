@@ -1,0 +1,4 @@
+recursive-include sentweement *py
+include MANIFEST.in
+include PIP_REQUIREMENTS
+include README

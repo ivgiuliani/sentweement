@@ -1,9 +1,11 @@
 build/
 ENV/
 dumps/
+dist/
 
 *.pyc
 *.swp
 *.model
 
+MANIFEST
 settings.py

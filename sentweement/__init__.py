@@ -2,6 +2,11 @@ import os
 import sys
 import imp
 
+__name__ = "sentweement"
+__version__ = "0.1"
+
+def get_version(): return __version__
+
 class LazySettings(object):
     "Lazily load settings"
     CONFIG_MODULE = "__config"
