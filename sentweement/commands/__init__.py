@@ -26,7 +26,11 @@ VALID_COMMANDS = {
         "params": "<model> <sentence>",
         "module": prediction.PredictSingleCommand,
     },
-    "predict-batch": None,
+    "predict-batch": {
+        "help": "Predict the label for the given dataset",
+        "params": "<model> <input dataset 1> [... <input dataset N>]",
+        "module": prediction.PredictBatchCommand,
+    },
     "twitter-search": {
         "help": "Show the current stream of tweets that matches the search terms",
         "params": "<language code> [<search term 1> ... <search term N>]",

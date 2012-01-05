@@ -134,4 +134,4 @@ class SentimentModel(object):
         else:
             text = tweet_obj["text"]
 
-        return self.get_classifier().classify(self.extract_features(tweet_obj))
+        return self.get_classifier().classify(self.extract_features(text))
