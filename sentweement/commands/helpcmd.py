@@ -14,3 +14,5 @@ class HelpCommand(BaseCommand):
             print("{0:>{width}}  {1}".format(command, help_text, width=command_width))
             if parameters:
                 print("{0:{width}}  Parameters: {1}".format("", parameters, width=command_width))
+
+        return False

@@ -1,3 +1,6 @@
+class InvalidParametersException(Exception):
+    pass
+
 class BaseCommand(object):
     def __init__(self, prog_name, args):
         self.__prog_name = prog_name
@@ -17,10 +20,15 @@ def run_command(prog_name, command, args):
     try:
         klass = get_commands()[command.lower()]["module"]
     except KeyError:
-        return
+        print("no command named '%s'" % command)
+        return True
 
     instance = klass(prog_name, args)
-    return instance.run()
+    try:
+        ret = instance.run()
+    except InvalidParameters:
+        klass = get_commands()["help"]["module"]
+        return klass(prog_name, args).run()
 
 def get_commands():
     from sentweement import commands
