@@ -1,4 +1,4 @@
 distribute>=0.6.21
 nltk
-git+git://github.com/tweepy/tweepy.git#egg=tweepy-latest
+tweepy>=1.8
 hg+https://code.google.com/p/chromium-compact-language-detector/

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 def get_name():
     # dynamically calculate the name based on sentweement.__name__
@@ -16,20 +16,22 @@ setup(  name=get_name(),
         author="Ivan Giuliani",
         author_email="giuliani.v@gmail.com",
         url="http://zeta-puppis.com",
+        platforms=[ 'Unix', 'Linux', 'Mac OS' ],
 
         # use MANIFEST.in to generate a comprehensive list of files
         # to include in the final package
         packages=[
             "sentweement",
+            "sentweement.commands",
         ],
         scripts=[
             "bin/sentweement",
         ],
 
         # keep this synced with PIP_REQUIREMENTS
-        requires=[
+        install_requires=[
             "nltk",
-            "tweepy",
+            "tweepy>=1.8",
             "cld",
         ],
         classifiers=[
