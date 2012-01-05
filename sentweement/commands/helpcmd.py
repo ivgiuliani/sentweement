@@ -7,6 +7,7 @@ class HelpCommand(BaseCommand):
         longest_command = max(commands)
         command_width = len(longest_command) + 2
 
+        print("Commands:")
         for command in commands:
             help_text = commands[command]["help"]
             parameters = commands[command]["params"]
