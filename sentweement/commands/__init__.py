@@ -6,7 +6,7 @@ __all__ = [ "run_command", "get_commands" ]
 VALID_COMMANDS = {
     "help": {
         "help": "Show help",
-        "params": "",
+        "params": "[command]",
         "module": helpcmd.HelpCommand,
     },
     "model-create": {
