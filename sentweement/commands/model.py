@@ -25,11 +25,35 @@ class CreateModelCommand(BaseCommand):
 
         sys.stdout.write("Processing %d files... " % len(datasets))
         sys.stdout.flush()
-        self.train_over_dumps(datasets)
+        model = self.train_over_dumps(datasets)
+        model.save(model_file)
         sys.stdout.write(" done!\n")
 
         return False
 
 class UpdateModelCommand(BaseCommand):
-    pass
+    def train_over_dumps(self, model_file, filenames):
+        model = SentimentModel.load(model_file)
+        reader = DataReader(filenames)
+
+        for tweet in reader.get_tweets():
+            model.fit(tweet)
+
+        return model
+
+    def run(self):
+        args = self.get_arguments()
+        try:
+            model_file = args[0]
+            datasets = args[1:]
+        except IndexError:
+            raise InvalidParameters
+
+        sys.stdout.write("Processing %d files... " % len(datasets))
+        sys.stdout.flush()
+        model = self.train_over_dumps(model_file, datasets)
+        model.save(model_file)
+        sys.stdout.write(" done!\n")
+
+        return False
 
