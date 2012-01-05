@@ -10,11 +10,11 @@ class HelpCommand(BaseCommand):
     def command_list(self):
         commands = get_commands()
         command_list = sorted(commands.keys())
-        longest_command = max(commands)
+        longest_command = max(commands, key=len)
         command_width = len(longest_command) + 2
 
-        print("Commands:")
-        for command in commands:
+        print("Available commands:")
+        for command in command_list:
             help_text = commands[command]["help"]
             parameters = commands[command]["params"]
 
