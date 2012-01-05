@@ -10,7 +10,7 @@ class BaseCommand(object):
         return self.__args
 
     def run(self):
-        raise NotImplemented
+        raise NotImplementedError("run() is not implemented for %s" % self.__class__)
 
 
 def run_command(prog_name, command, args):
