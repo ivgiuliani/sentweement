@@ -60,9 +60,9 @@ class SentimentModel(object):
             tokens = [ nltk_tokens[0] ] + tokens
         return tokens
 
-    def extract_features(self, tweet_obj):
+    def extract_features(self, text):
         "Extracts a set of features from the given tweet"
-        text = tweet.fix(tweet_obj["text"])
+        text = tweet.fix(text)
         text = tweet.remove_urls(text)
 
         tokens = self.tokenize(text)
@@ -96,7 +96,7 @@ class SentimentModel(object):
         # the following implementation is mostly copied from
         # nltk.NaiveBayesClassifier.train, but allows for incremental
         # training over the dataset
-        features = self.extract_features(tweet_obj)
+        features = self.extract_features(tweet_obj["text"])
         self.label_freqdist.inc(sentiment)
 
         for fname, fval in features.iteritems():
@@ -130,6 +130,8 @@ class SentimentModel(object):
         """
         if isinstance(tweet_obj, (str, unicode)):
             # allow direct text passing for easier testing
-            tweet_obj = { "text": tweet_obj }
+            text = tweet_obj
+        else:
+            text = tweet_obj["text"]
 
         return self.get_classifier().classify(self.extract_features(tweet_obj))
