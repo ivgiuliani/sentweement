@@ -1,5 +1,6 @@
 from sentweement.commands import helpcmd
 from sentweement.commands import model
+from sentweement.commands import twitter
 
 __all__ = [ "run_command", "get_commands" ]
 
@@ -21,6 +22,14 @@ VALID_COMMANDS = {
     },
     "predict": None,
     "predict-batch": None,
-    "twitter-search": None,
-    "twitter-gen-dataset": None,
+    "twitter-search": {
+        "help": "Show the current stream of tweets that matches the search terms",
+        "params": "<language code> [<search term 1> ... <search term N>]",
+        "module": twitter.SearchTweetsCommand,
+    },
+    "twitter-gen-dataset": {
+        "help": "Save a twitter dataset sample",
+        "params": "<language code> <tweet count> <output file>",
+        "module": twitter.SaveSampleCommand,
+    },
 }
