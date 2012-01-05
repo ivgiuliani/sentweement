@@ -132,4 +132,4 @@ class SentimentModel(object):
             # allow direct text passing for easier testing
             tweet_obj = { "text": tweet_obj }
 
-        return self.get_classifier().classify(self.extract_features(text))
+        return self.get_classifier().classify(self.extract_features(tweet_obj))
