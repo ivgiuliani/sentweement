@@ -1,4 +1,4 @@
-class InvalidParametersException(Exception):
+class InvalidParameters(Exception):
     pass
 
 class BaseCommand(object):
@@ -27,6 +27,8 @@ def run_command(prog_name, command, args):
     try:
         ret = instance.run()
     except InvalidParameters:
+        print("ERROR: invalid parameters for %s\n" % command)
+
         klass = get_commands()["help"]["module"]
         return klass(prog_name, args).run()
 
