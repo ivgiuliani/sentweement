@@ -4,5 +4,6 @@ dumps/
 
 *.pyc
 *.swp
+*.model
 
 settings.py
