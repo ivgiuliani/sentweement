@@ -5,7 +5,6 @@ import imp
 __name__ = "sentweement"
 __version__ = "0.1"
 
-def get_version(): return __version__
 
 class LazySettings(object):
     "Lazily load settings"
@@ -30,13 +29,21 @@ class LazySettings(object):
         try:
             module = imp.load_source(self.CONFIG_MODULE, *path)
         except IOError:
-            sys.stderr.write("WARNING: Config file %s not found, using default settings\n" % settings_path)
+            err_str = "Config file %s not found, using default settings"
+            self.print_warning(err_str % settings_path)
             return
         except Exception as e:
-            sys.stderr.write("WARNING: Skipping config file import: %s\n" % str(e))
+            err_str = "Skipping config file import: %s"
+            self.print_warning(err_str % str(e))
             return
 
         self.__import(module)
 
-settings = LazySettings()
+    def print_warning(self, msg):
+        sys.stderr.write("WARNING: %s\n" % msg)
 
+
+def get_version():
+    return __version__
+
+settings = LazySettings()

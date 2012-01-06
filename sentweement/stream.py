@@ -1,5 +1,6 @@
 import tweepy
 
+
 class SearchListener(tweepy.StreamListener):
     def __init__(self, auth, search_terms, status_callback,
                                            error_callback=None,
