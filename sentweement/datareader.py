@@ -31,7 +31,7 @@ class DataReader(object):
             for row in reader:
                 sentiment, time, author, text = row
                 yield (
-                    sentiment,
+                    int(sentiment),
                     tweet.Tweet(time, author, text),
                 )
 

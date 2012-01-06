@@ -115,6 +115,13 @@ class TestReader(unittest.TestCase):
         self.assertEqual(authors, [ "author%d" % i for i in range(1, 10) ])
         self.assertEqual(text, [ "text%d" % i for i in range(1, 10) ])
 
+    def testSentimentIsInteger(self):
+        "Sentiment value must be converted to integers"
+        reader = datareader.DataReader(self.filenames)
+        for item in reader.get_tweets():
+            sentiment, tweet = item
+            self.assertTrue(isinstance(sentiment, int))
+
 
 class TestLearning(unittest.TestCase):
     def setUp(self):
