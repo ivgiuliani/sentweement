@@ -57,7 +57,7 @@ class PredictBatchCommand(BaseCommand):
         for item in reader.get_tweets():
             sentiment, tweet = item
             label = TEXT_LABELS[model.predict(tweet)]
-            print(" %10s: %s" % (label, tweet["text"]))
+            print(" %10s: %s" % (label, tweet.text))
 
         return False
 

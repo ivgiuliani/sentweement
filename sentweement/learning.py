@@ -105,4 +105,5 @@ class SentimentModel(object):
         The predicted sentiment will be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
-        return self.get_classifier().classify(self.extract_features(tweet_obj))
+        classifier = self.get_classifier()
+        return int(classifier.classify(self.extract_features(tweet_obj)))
