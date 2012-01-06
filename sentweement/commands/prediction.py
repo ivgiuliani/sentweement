@@ -1,5 +1,5 @@
 from sentweement.datareader import DataReader
-from sentweement.learning import SentimentModel
+from sentweement.learning.model import SentimentModel
 from sentweement.tweet import DummyTweet
 from sentweement.commands.base import BaseCommand, InvalidParameters
 
