@@ -1,6 +1,6 @@
 from sentweement import tweet
 from sentweement.datareader import DataReader
-from sentweement.learning import SentimentModel
+from sentweement.learning.model import SentimentModel
 from sentweement.commands.base import BaseCommand, InvalidParameters
 
 import sys
