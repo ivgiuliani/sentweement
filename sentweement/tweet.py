@@ -6,9 +6,9 @@ import string
 
 class Tweet(object):
     """
-    Represents a tweet
+    Represents a tweet.
 
-    Tweet properties like the timestamp, the username and the text can
+    Tweet properties like the tweet id, the username and the text can
     only be assigned on initialization, afterwards they are set read-only.
 
     Every editing function will return a new tweet instance with the
@@ -18,8 +18,8 @@ class Tweet(object):
     RE_RETWEET = re.compile(r"RT[:, ]*")
     RE_URLS = re.compile(r"([\w-]+://[\w.-/]+|www.[\w.-/]+)[ ]*")
 
-    def __init__(self, timestamp, username, text):
-        self.__timestamp = timestamp
+    def __init__(self, tweet_id, username, text):
+        self.__tweet_id = tweet_id
         self.__username = username
         self.__text = text
 
@@ -27,8 +27,8 @@ class Tweet(object):
         return self.__text
 
     @property
-    def timestamp(self):
-        return self.__timestamp
+    def tid(self):
+        return self.__tweet_id
 
     @property
     def username(self):
@@ -63,28 +63,28 @@ class Tweet(object):
         while re.search(r"  ", text):
             text = re.sub(r"  ", " ", text)
 
-        return Tweet(self.timestamp, self.username, text.strip())
+        return Tweet(self.tid, self.username, text.strip())
 
     def remove_usernames(self):
         "Remove @usernames from the given text"
         text = self.text
         while self.RE_USERNAME.search(text):
             text = re.sub(self.RE_USERNAME, "", text)
-        return Tweet(self.timestamp, self.username, text.strip())
+        return Tweet(self.tid, self.username, text.strip())
 
     def remove_retweets(self):
         "Remove RT: retweets from the given text"
         text = self.text
         while self.RE_RETWEET.search(text):
             text = re.sub(self.RE_RETWEET, "", text)
-        return Tweet(self.timestamp, self.username, text.strip())
+        return Tweet(self.tid, self.username, text.strip())
 
     def remove_urls(self):
         "Remove urls from the given text"
         text = self.text
         while self.RE_URLS.search(text):
             text = re.sub(self.RE_URLS, "", text)
-        return Tweet(self.timestamp, self.username, text.strip())
+        return Tweet(self.tid, self.username, text.strip())
 
 
 class DummyTweet(Tweet):

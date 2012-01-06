@@ -6,7 +6,6 @@ from sentweement.commands.base import BaseCommand
 from sentweement.commands.base import get_commands
 from sentweement.commands.base import InvalidParameters
 
-import time
 import csv
 
 class SampleDumper(object):
@@ -18,6 +17,7 @@ class SampleDumper(object):
         self._output = csv.writer(open(output, "w"))
 
     def cb_search(self, status):
+        tweet_id = status.id_str
         author = status.author.screen_name
         text = status.text
 
@@ -26,7 +26,7 @@ class SampleDumper(object):
 
         lang = language.get_language(text)
         if lang[1] == self.language:
-            self._output.writerow([0, time.time(), author, text])
+            self._output.writerow([0, tweet_id, author, text])
             self.counter += 1
 
         if self.counter < self.count:

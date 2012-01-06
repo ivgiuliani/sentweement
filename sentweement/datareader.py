@@ -32,9 +32,9 @@ class DataReader(object):
 
             reader = csv.reader(open(filename, "rb"))
             for lineno, row in enumerate(reader):
-                sentiment, time, author, text = row
+                sentiment, tweet_id, author, text = row
                 try:
-                    ret = (int(sentiment), tweet.Tweet(time, author, text))
+                    ret = (int(sentiment), tweet.Tweet(tweet_id, author, text))
                 except ValueError:
                     err_str = "WARNING: malformed line no. %d"
                     sys.stderr.write(err_str % (lineno + 1))
