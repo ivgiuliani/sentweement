@@ -2,7 +2,6 @@ from sentweement import tweet
 from sentweement.learning.models import bayes
 
 import inspect
-from collections import defaultdict
 
 import nltk
 try:

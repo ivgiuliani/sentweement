@@ -1,11 +1,13 @@
 from sentweement.learning.models import base
 
+from collections import defaultdict
+
 import nltk
 
 class NaiveBayesModel(base.ModelBase):
-    def __init__(self, estimator=nltk.probability.ELEProbDist, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         base.ModelBase.__init__(self, *args, **kwargs)
-        self.estimator = estimator
+        self.estimator = nltk.probability.ELEProbDist
         self.label_freqdist = nltk.probability.FreqDist()
         self.feature_freqdist = defaultdict(nltk.probability.FreqDist)
         self.feature_values = defaultdict(set)
