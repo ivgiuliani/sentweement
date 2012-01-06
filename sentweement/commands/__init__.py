@@ -21,6 +21,11 @@ VALID_COMMANDS = {
         "params": "<input model> <input dataset 1> [... <input dataset N>]",
         "module": model.UpdateModelCommand,
     },
+    "model-evaluate": {
+        "help": "Evaluate the model",
+        "params": "<model> <gold dataset 1> [... <gold dataset N>]",
+        "module": model.EvaluateCommand,
+    },
     "predict-single": {
         "help": "Predict the label for the given sentence",
         "params": "<model> <sentence>",
@@ -30,11 +35,6 @@ VALID_COMMANDS = {
         "help": "Predict the label for the given dataset",
         "params": "<model> <input dataset 1> [... <input dataset N>]",
         "module": prediction.PredictBatchCommand,
-    },
-    "predict-evaluate": {
-        "help": "Evaluate the model",
-        "params": "<model> <gold dataset 1> [... <gold dataset N>]",
-        "module": prediction.EvaluateCommand,
     },
     "twitter-search": {
         "help": "Show the current stream of tweets that matches the search terms",
