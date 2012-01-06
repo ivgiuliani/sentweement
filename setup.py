@@ -15,7 +15,7 @@ setup(  name=get_name(),
         description="Twitter sentiment analysis toolkit",
         author="Ivan Giuliani",
         author_email="giuliani.v@gmail.com",
-        url="http://zeta-puppis.com",
+        url="https://github.com/kratorius/sentweement",
         platforms=[ "Unix", "Linux", "Mac OS" ],
 
         # use MANIFEST.in to generate a comprehensive list of files
