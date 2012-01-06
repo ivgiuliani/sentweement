@@ -84,3 +84,8 @@ class Tweet(object):
         while self.RE_URLS.search(text):
             text = re.sub(self.RE_URLS, "", text)
         return Tweet(self.timestamp, self.username, text.strip())
+
+
+class DummyTweet(Tweet):
+    def __init__(self, text):
+        Tweet.__init__(self, -1, "", text) 

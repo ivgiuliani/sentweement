@@ -1,5 +1,6 @@
 from sentweement.datareader import DataReader
 from sentweement.learning import SentimentModel
+from sentweement.tweet import DummyTweet
 from sentweement.commands.base import BaseCommand, InvalidParameters
 
 import nltk
@@ -27,8 +28,9 @@ class PredictSingleCommand(BaseCommand):
             print("ERROR: model file '%s' doesn't exist" % model_file)
             return True
 
+        dummytweet = DummyTweet(text)
         model = SentimentModel.load(model_file)
-        label = TEXT_LABELS[model.predict(text)]
+        label = TEXT_LABELS[model.predict(dummytweet)]
 
         print("Prediction:")
         print(" %10s: %s" % (label, text))
