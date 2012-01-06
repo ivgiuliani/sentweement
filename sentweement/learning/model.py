@@ -11,10 +11,6 @@ except ImportError:
 
 class SentimentModel(object):
     "Sentiment classifier for tweets"
-    TWITTER_USERNAME_PREFIX = "@"
-    TWITTER_HASHTAG_PREFIX = "#"
-    TWITTER_CHARS = "@#"
-
     SNT_POSITIVE = 1
     SNT_NEUTRAL  = 0
     SNT_NEGATIVE = -1
