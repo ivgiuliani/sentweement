@@ -5,22 +5,42 @@ from sentweement.commands.base import BaseCommand, InvalidParameters
 
 import sys
 
-class CreateModelCommand(BaseCommand):
+class ModelProcessing(BaseCommand):
+    def __init__(self, *args, **kwargs):
+        BaseCommand.__init__(self, *args, **kwargs)
+        self.__filenames = []
+
+    def on_file_start(self, filename):
+        tot = len(self.__filenames)
+        curr = self.__filenames.index(filename) + 1
+        sys.stdout.write("  [%3d/%-3d] %s... " % (curr, tot, filename))
+        sys.stdout.flush()
+
+    def on_file_stop(self, filename):
+        sys.stdout.write(" done!\n")
+
+    def train_over_dumps(self, model, filenames):
+        # remove duplicate file names
+        filenames = sorted(list(set(filenames)))
+
+        self.__filenames = filenames
+        reader = DataReader(filenames, on_file_start_cb=self.on_file_start,
+                                       on_file_stop_cb=self.on_file_stop)
+
+        sys.stdout.write("Processing %d files...\n" % len(filenames))
+        for item in reader.get_tweets():
+            sentiment, tweet = item
+            model.fit(tweet, sentiment)
+
+        return model
+
+
+class CreateModelCommand(ModelProcessing):
     """
     Create a new sentiment model using the given datasets as input.
     If a model with the same name already exists, it will be overwritten.
     """
 
-    def train_over_dumps(self, filenames):
-        model = SentimentModel()
-        reader = DataReader(filenames)
-
-        for item in reader.get_tweets():
-            sentiment, tweet = item
-            model.fit(tweet, sentiment)
-
-        return model
-
     def run(self):
         args = self.get_arguments()
         try:
@@ -29,31 +49,19 @@ class CreateModelCommand(BaseCommand):
         except IndexError:
             raise InvalidParameters
 
-        sys.stdout.write("Processing %d files... " % len(datasets))
-        sys.stdout.flush()
-        model = self.train_over_dumps(datasets)
+        model = SentimentModel()
+        model = self.train_over_dumps(model, datasets)
         model.save(model_file)
-        sys.stdout.write(" done!\n")
 
         return False
 
 
-class UpdateModelCommand(BaseCommand):
+class UpdateModelCommand(ModelProcessing):
     """
     Update a new sentiment model using the given datasets as input.
     If the model doesn't exist yet, a new one will be created.
     """
 
-    def train_over_dumps(self, model_file, filenames):
-        model = SentimentModel.load(model_file)
-        reader = DataReader(filenames)
-
-        for item in reader.get_tweets():
-            sentiment, tweet = item
-            model.fit(tweet, sentiment)
-
-        return model
-
     def run(self):
         args = self.get_arguments()
         try:
@@ -62,11 +70,8 @@ class UpdateModelCommand(BaseCommand):
         except IndexError:
             raise InvalidParameters
 
-        sys.stdout.write("Processing %d files... " % len(datasets))
-        sys.stdout.flush()
-        model = self.train_over_dumps(model_file, datasets)
+        model = SentimentModel.load(model_file)
+        model = self.train_over_dumps(model, datasets)
         model.save(model_file)
-        sys.stdout.write(" done!\n")
 
         return False
-
