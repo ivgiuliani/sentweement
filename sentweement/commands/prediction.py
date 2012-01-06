@@ -28,7 +28,7 @@ class PredictSingleCommand(BaseCommand):
             return True
 
         model = SentimentModel.load(model_file)
-        label = text_labels[model.predict(text)]
+        label = TEXT_LABELS[model.predict(text)]
 
         print("Prediction:")
         print(" %10s: %s" % (label, text))
@@ -56,7 +56,7 @@ class PredictBatchCommand(BaseCommand):
         print("Prediction:")
         for item in reader.get_tweets():
             sentiment, tweet = item
-            label = text_labels[model.predict(tweet)]
+            label = TEXT_LABELS[model.predict(tweet)]
             print(" %10s: %s" % (label, tweet["text"]))
 
         return False
