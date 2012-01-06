@@ -80,9 +80,6 @@ class SentimentModel(object):
                 continue
             features["has(%s)" % token] = True
 
-        for letter in "abcdefghijklmnopqrstuwxyz":
-            features["high_char_ratio(%s)" % letter] = text.lower().count(letter) / float(len(text)) > 0.1
-
         return features
 
     def fit(self, tweet_obj):
