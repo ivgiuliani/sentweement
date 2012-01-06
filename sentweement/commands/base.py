@@ -1,3 +1,5 @@
+from sentweement import settings
+
 class InvalidParameters(Exception):
     pass
 
@@ -23,7 +25,9 @@ def run_command(prog_name, command, args):
         print("no command named '%s'" % command)
         return True
 
+    settings.use(settings.SETTINGS_FILE)
     instance = klass(prog_name, args)
+
     try:
         ret = instance.run()
     except InvalidParameters:

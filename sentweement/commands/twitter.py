@@ -64,8 +64,6 @@ class SaveSampleCommand(BaseCommand):
         except (IndexError, ValueError):
             raise InvalidParameters
 
-        settings.use(settings.SETTINGS_FILE)
-
         dumper = SampleDumper(language, count, output)
         s = stream.SearchListener(auth.auth(), "", dumper.cb_search)
 
@@ -93,8 +91,6 @@ class SearchTweetsCommand(BaseCommand):
         search_terms = arguments[1:]
         if not search_terms:
             raise InvalidParameters
-
-        settings.use(settings.SETTINGS_FILE)
 
         tfilter = FilterSearch()
         s = stream.SearchListener(auth.auth(),
