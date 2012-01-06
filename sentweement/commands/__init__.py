@@ -32,7 +32,7 @@ VALID_COMMANDS = {
         "module": prediction.PredictSingleCommand,
     },
     "predict-batch": {
-        "help": "Predict the label for the given dataset",
+        "help": "Predict the labels for the given dataset",
         "params": "<model> <input dataset 1> [... <input dataset N>]",
         "module": prediction.PredictBatchCommand,
     },
