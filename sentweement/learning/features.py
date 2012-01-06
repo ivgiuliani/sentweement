@@ -6,7 +6,8 @@ def extract_unigrams(tweet):
                  .remove_urls()
                  .remove_usernames()
                  .remove_retweets()
-                 .text)
+                 .text
+                 .lower())
 
     tokens = nltk.wordpunct_tokenize(text)
     features = {}
@@ -22,7 +23,8 @@ def extract_bigrams(tweet):
                  .remove_urls()
                  .remove_usernames()
                  .remove_retweets()
-                 .text)
+                 .text
+                 .lower())
 
     tokens = nltk.wordpunct_tokenize(text)
     features = {}
