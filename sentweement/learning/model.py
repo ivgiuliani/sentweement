@@ -1,3 +1,4 @@
+from sentweement import settings
 from sentweement import tweet
 from sentweement.learning.models import bayes
 from sentweement.learning import features
@@ -15,10 +16,8 @@ class SentimentModel(object):
     SNT_NEUTRAL  = 0
     SNT_NEGATIVE = -1
 
-    def __init__(self, model=bayes.NaiveBayesModel, feature_extractors=[]):
-        # TODO: allow external list of feature extractors
-        self.feature_extractors = [ features.extract_unigrams,
-                                    features.extract_bigrams ]
+    def __init__(self, model=bayes.NaiveBayesModel, feature_extractors=None):
+        self.feature_extractor = feature_extractors or settings.FEATURE_EXTRACTORS
 
         if inspect.isclass(model):
             self.model = model(self.feature_extractors)
