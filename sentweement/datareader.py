@@ -4,6 +4,7 @@ import csv
 import sys
 import os
 
+
 class DataReader(object):
     "Performs unified data reading over a set of given tweet dumps"
 
@@ -35,7 +36,8 @@ class DataReader(object):
                 try:
                     ret = (int(sentiment), tweet.Tweet(time, author, text))
                 except ValueError:
-                    sys.stderr.write("WARNING: malformed line no. %d" % (lineno + 1))
+                    err_str = "WARNING: malformed line no. %d"
+                    sys.stderr.write(err_str % (lineno + 1))
                     continue
                 yield ret
 
@@ -50,4 +52,3 @@ class DataReader(object):
             if not os.path.exists(filename):
                 return False
         return True
-
