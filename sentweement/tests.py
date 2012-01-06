@@ -123,34 +123,5 @@ class TestReader(unittest.TestCase):
             self.assertTrue(isinstance(sentiment, int))
 
 
-class TestLearning(unittest.TestCase):
-    def setUp(self):
-        self.sentiment_model = learning.SentimentModel()
-
-    def testTweetTokenization(self):
-        self.assertEqual(self.sentiment_model.tokenize(""), [])
-        self.assertEqual(self.sentiment_model.tokenize("hello"),
-                         ["hello"])
-        self.assertEqual(self.sentiment_model.tokenize("hello world"),
-                         ["hello", "world"])
-        self.assertEqual(self.sentiment_model.tokenize("hello world :)"),
-                         ["hello", "world", ":)"])
-        self.assertEqual(self.sentiment_model.tokenize("hello... world..."),
-                         ["hello", "...", "world", "..."])
-        self.assertEqual(self.sentiment_model.tokenize("hello:) world:("),
-                         ["hello", ":)", "world", ":("])
-        self.assertEqual(self.sentiment_model.tokenize("hello...world..."),
-                         ["hello", "...", "world", "..."])
-        self.assertEqual(self.sentiment_model.tokenize("hello:-)world:-("),
-                         ["hello", ":-)", "world", ":-("])
-        self.assertEqual(self.sentiment_model.tokenize("@username: 1 2 3 hello"),
-                         ["@username", ":", "1", "2", "3", "hello"])
-        self.assertEqual(self.sentiment_model.tokenize("hello @username #hashtag!"),
-                         ["hello", "@username", "#hashtag", "!"])
-        self.assertEqual(self.sentiment_model.tokenize("@@@###"),
-                         ["@@@###"])
-        self.assertEqual(self.sentiment_model.tokenize("@username: the #hashtag!"),
-                         ["@username", ":", "the", "#hashtag", "!"])
-
 if __name__ == '__main__':
     unittest.main()
