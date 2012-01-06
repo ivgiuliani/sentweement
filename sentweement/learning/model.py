@@ -16,14 +16,15 @@ class SentimentModel(object):
     SNT_NEGATIVE = -1
 
     def __init__(self, model=bayes.NaiveBayesModel, feature_extractors=[]):
-        if inspect.isclass(model):
-            self.model = model(self.extract_features)
-        else:
-            # preloaded model, likely from a pickle load
-            self.model = model
         # TODO: allow external list of feature extractors
         self.feature_extractors = [ features.extract_unigrams,
                                     features.extract_bigrams ]
+
+        if inspect.isclass(model):
+            self.model = model(self.feature_extractors)
+        else:
+            # preloaded model, likely from a pickle load
+            self.model = model
 
     def save(self, filename):
         "Serializes the current model to the specified file"
@@ -41,9 +42,11 @@ class SentimentModel(object):
         fd = open(filename, "rb")
         load_obj = pickle.load(fd)
         fd.close()
-        self.feature_extractors = load_obj["feature_extractors"]
-        self.model = load_obj["model"]
-        return SentimentModel(model)
+
+        feature_extractors = load_obj["feature_extractors"]
+        model = load_obj["model"]
+
+        return SentimentModel(model, feature_extractors)
 
     def fit(self, tweet_obj, sentiment):
         """
@@ -59,4 +62,4 @@ class SentimentModel(object):
         The predicted sentiment will be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
-        return self.predict(tweet_obj)
+        return self.model.predict(tweet_obj)

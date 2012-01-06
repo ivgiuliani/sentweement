@@ -46,5 +46,5 @@ class NaiveBayesModel(base.ModelBase):
 
     def predict(self, tweet):
         classifier = self.get_classifier()
-        return int(classifier.classify(self.extract_features(tweet_obj)))
+        return int(classifier.classify(self.extract_features(tweet)))
 
