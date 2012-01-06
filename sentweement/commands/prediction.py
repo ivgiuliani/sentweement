@@ -1,5 +1,5 @@
 from sentweement.datareader import DataReader
-from sentweement.learning.model import SentimentModel
+from sentweement.learning.model import SentimentModel, ModelEvaluator
 from sentweement.tweet import DummyTweet
 from sentweement.commands.base import BaseCommand, InvalidParameters
 
@@ -79,73 +79,45 @@ class EvaluateCommand(BaseCommand):
             return True
 
         model = SentimentModel.load(model_file)
-        reader = DataReader(filenames)
+        evaluator = ModelEvaluator(model, filenames)
 
-        gold, test = [], []
-        for item in reader.get_tweets():
-            sentiment, tweet = item
-            gold.append(sentiment)
-            test.append(model.predict(tweet))
+        gold, test = evaluator.get_gold_comparison()
 
         print("Confusion matrix:")
         cm = nltk.ConfusionMatrix(gold, test)
         print(cm.pp(sort_by_count=True, show_percents=True))
 
-        summary = {}
-        for sentiment, label in TEXT_LABELS.items():
-            summary[label] = {}
-            true_positives = 0
-            true_negatives = 0
-            false_positives = 0
-            false_negatives = 0
+        summary = evaluator.evaluate()
+        precision_sum, recall_sum, fmeasure_sum = 0, 0, 0
 
-            for gold_item, test_item in zip(gold, test):
-                if gold_item == sentiment and gold_item == test_item:
-                    true_positives += 1
-                elif gold_item != sentiment and test_item != sentiment:
-                    true_negatives += 1
-                elif gold_item != sentiment and test_item == sentiment:
-                    false_positives += 1
-                elif gold_item == sentiment and gold_item != test_item:
-                    false_negatives += 1
-
-            precision = (true_positives / float((true_positives + false_positives)))
-            recall = (true_positives / float((true_positives + false_negatives)))
-            fmeasure = (2 * precision * recall) / (precision + recall)
-
-            summary[label]["true-positives"] = true_positives
-            summary[label]["true-negatives"] = true_negatives
-            summary[label]["false-positives"] = false_positives
-            summary[label]["false-negatives"] = false_negatives
-            summary[label]["precision"] = precision
-            summary[label]["recall"] = recall
-            summary[label]["f-measure"] = fmeasure
-
-        labels = TEXT_LABELS.values()
         print("                TP     FP     TN     FP  precision  recall  f-measure")
         rowstr = "%(label)s %(tp)6s %(tn)6s %(fp)6s %(fn)6s  %(precision)2.5f   %(recall)2.5f   %(fmeasure)2.5f"
-        for label in labels:
+        for sentiment, label in TEXT_LABELS.items():
             print(rowstr % {
                 "label": '%s:' % label.rjust(10),
-                "tp": summary[label]["true-positives"],
-                "fp": summary[label]["false-positives"],
-                "tn": summary[label]["true-negatives"],
-                "fn": summary[label]["false-negatives"],
-                "precision": summary[label]["precision"],
-                "recall": summary[label]["recall"],
-                "fmeasure": summary[label]["f-measure"],
+                "tp": summary[sentiment]["true-positives"],
+                "fp": summary[sentiment]["false-positives"],
+                "tn": summary[sentiment]["true-negatives"],
+                "fn": summary[sentiment]["false-negatives"],
+                "precision": summary[sentiment]["precision"],
+                "recall": summary[sentiment]["recall"],
+                "fmeasure": summary[sentiment]["f-measure"],
             })
 
-        avg_precision = sum([summary[label]["precision"] for label in labels]) / len(labels)
-        avg_recall = sum([summary[label]["recall"] for label in labels]) / len(labels)
-        avg_fmeasure = sum([summary[label]["f-measure"] for label in labels]) / len(labels)
+            precision_sum += summary[sentiment]["precision"]
+            recall_sum += summary[sentiment]["recall"]
+            fmeasure_sum += summary[sentiment]["f-measure"]
+
+        precision_avg = precision_sum / len(TEXT_LABELS)
+        recall_avg = recall_sum / len(TEXT_LABELS)
+        fmeasure_avg = fmeasure_sum / len(TEXT_LABELS)
 
         print(rowstr % {
             "label": "average:".rjust(11),
             "tp": "", "fp": "", "tn": "", "fn": "",
-            "precision": avg_precision,
-            "recall": avg_recall,
-            "fmeasure": avg_fmeasure,
+            "precision": precision_avg,
+            "recall": recall_avg,
+            "fmeasure": fmeasure_avg,
         })
 
         return False
