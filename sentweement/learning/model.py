@@ -1,9 +1,9 @@
 from sentweement import tweet
 from sentweement.learning.models import bayes
+from sentweement.learning import features
 
 import inspect
 
-import nltk
 try:
     import cPickle as pickle
 except ImportError:
@@ -22,7 +22,8 @@ class SentimentModel(object):
             # preloaded model, likely from a pickle load
             self.model = model
         # TODO: allow external list of feature extractors
-        self.feature_extractors = [ self.extract_features ]
+        self.feature_extractors = [ features.extract_unigrams,
+                                    features.extract_bigrams ]
 
     def save(self, filename):
         "Serializes the current model to the specified file"
@@ -43,24 +44,6 @@ class SentimentModel(object):
         self.feature_extractors = load_obj["feature_extractors"]
         self.model = load_obj["model"]
         return SentimentModel(model)
-
-    def extract_features(self, tweet_obj):
-        "Extracts a set of features from the given tweet"
-        text = (tweet_obj.fix()
-                         .remove_urls()
-                         .remove_usernames()
-                         .remove_retweets()
-                         .text)
-
-        tokens = nltk.wordpunct_tokenize(text)
-        features = {}
-
-        for token1, token2 in zip(tokens, tokens[1:]):
-            features["has(%s)" % token1] = True
-            features["has(%s)" % token2] = True
-            features["has(%s %s)" % (token1, token2)] = True
-
-        return features
 
     def fit(self, tweet_obj, sentiment):
         """
