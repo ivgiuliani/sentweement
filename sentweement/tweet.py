@@ -3,6 +3,7 @@
 import re
 import string
 
+
 class Tweet(object):
     """
     Represents a tweet
@@ -45,8 +46,8 @@ class Tweet(object):
             "\r": " ",
             "\n": " ",
             "\t": " ",
-            "&gt;" : ">",
-            "&lt;" : "<",
+            "&gt;": ">",
+            "&lt;": "<",
             "&#39;": "'",
             "&quot;": "\"",
             "“": "\"",
@@ -88,4 +89,4 @@ class Tweet(object):
 
 class DummyTweet(Tweet):
     def __init__(self, text):
-        Tweet.__init__(self, -1, "", text) 
+        Tweet.__init__(self, -1, "", text)
