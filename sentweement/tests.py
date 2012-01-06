@@ -20,7 +20,8 @@ class TestTweets(unittest.TestCase):
         )
 
         for test, expected_value in tests:
-            self.assertEqual(tweet.remove_usernames(test), expected_value)
+            t = tweet.Tweet(123456789, "username", test)
+            self.assertEqual(t.remove_usernames().text, expected_value)
 
     def testRetweetRemoval(self):
         tests = (
@@ -30,7 +31,8 @@ class TestTweets(unittest.TestCase):
         )
 
         for test, expected_value in tests:
-            self.assertEqual(tweet.remove_retweets(test), expected_value)
+            t = tweet.Tweet(123456789, "username", test)
+            self.assertEqual(t.remove_retweets().text, expected_value)
 
     def testUrlRemoval(self):
         tests = (
@@ -42,7 +44,8 @@ class TestTweets(unittest.TestCase):
         )
 
         for test, expected_value in tests:
-            self.assertEqual(tweet.remove_urls(test), expected_value)
+            t = tweet.Tweet(123456789, "username", test)
+            self.assertEqual(t.remove_urls().text, expected_value)
 
     def testTweetFix(self):
         tests = (
@@ -53,7 +56,24 @@ class TestTweets(unittest.TestCase):
         )
 
         for test, expected_value in tests:
-            self.assertEqual(tweet.fix(test), expected_value)
+            t = tweet.Tweet(123456789, "username", test)
+            self.assertEqual(t.fix().text, expected_value)
+
+    def testEditChain(self):
+        tests = (
+            # full text, expected text
+            ("» Hello www.google.com «", ">> Hello <<"),
+            ("RT: test &gt; @test2", "test >"),
+            ("RT: “hello world“", "\"hello world\""),
+            ("RT: “hello www.google.com &gt; world“", "\"hello > world\""),
+        )
+
+        for test, expected_value in tests:
+            t = tweet.Tweet(123456789, "username", test)
+            self.assertEqual(t.fix()
+                              .remove_usernames()
+                              .remove_urls()
+                              .remove_retweets().text, expected_value)
 
 
 class TestReader(unittest.TestCase):

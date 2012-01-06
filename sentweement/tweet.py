@@ -3,51 +3,84 @@
 import re
 import string
 
-def fix(text):
-    """Fix a tweet by converting it in a proper and equivalent text
-    format for easier successive analysis.
+class Tweet(object):
     """
+    Represents a tweet
 
-    mapping = {
-        "\r": " ",
-        "\n": " ",
-        "\t": " ",
-        "&gt;" : ">",
-        "&lt;" : "<",
-        "&#39;": "'",
-        "&quot;": "\"",
-        "“": "\"",
-        "’": "'",
-        "»": ">>",
-        "«": "<<",
-    }
+    Tweet properties like the timestamp, the username and the text can
+    only be assigned on initialization, afterwards they are set read-only.
 
-    for key, val in mapping.iteritems():
-        text = text.replace(key, val)
+    Every editing function will return a new tweet instance with the
+    changes applied.
+    """
+    RE_USERNAME = re.compile(r"@\w+[:,;! ]*")
+    RE_RETWEET = re.compile(r"RT[:, ]*")
+    RE_URLS = re.compile(r"([\w-]+://[\w.-/]+|www.[\w.-/]+)[ ]*")
 
-    while re.search(r"  ", text):
-        text = re.sub(r"  ", " ", text)
+    def __init__(self, timestamp, username, text):
+        self.__timestamp = timestamp
+        self.__username = username
+        self.__text = text
 
-    return text.strip()
+    def __str__(self):
+        return self.__text
 
-RE_USERNAME = re.compile(r"@\w+[:,;! ]*")
-def remove_usernames(text):
-    "Remove @usernames from the given text"
-    while RE_USERNAME.search(text):
-        text = re.sub(RE_USERNAME, "", text)
-    return text.strip()
+    @property
+    def timestamp(self):
+        return self.__timestamp
 
-RE_RETWEET = re.compile(r"RT[:, ]*")
-def remove_retweets(text):
-    "Remove RT: retweets from the given text"
-    while RE_RETWEET.search(text):
-        text = re.sub(RE_RETWEET, "", text)
-    return text.strip()
+    @property
+    def username(self):
+        return self.__username
 
-RE_URLS = re.compile(r"([\w-]+://[\w.-/]+|www.[\w.-/]+)[ ]*")
-def remove_urls(text):
-    "Remove urls from the given text"
-    while RE_URLS.search(text):
-        text = re.sub(RE_URLS, "", text)
-    return text.strip()
+    @property
+    def text(self):
+        return self.__text
 
+    def fix(self):
+        """Fix a tweet by converting it in a proper and equivalent text
+        format for easier successive analysis.
+        """
+        mapping = {
+            "\r": " ",
+            "\n": " ",
+            "\t": " ",
+            "&gt;" : ">",
+            "&lt;" : "<",
+            "&#39;": "'",
+            "&quot;": "\"",
+            "“": "\"",
+            "’": "'",
+            "»": ">>",
+            "«": "<<",
+        }
+
+        text = self.text
+        for key, val in mapping.iteritems():
+            text = text.replace(key, val)
+
+        while re.search(r"  ", text):
+            text = re.sub(r"  ", " ", text)
+
+        return Tweet(self.timestamp, self.username, text.strip())
+
+    def remove_usernames(self):
+        "Remove @usernames from the given text"
+        text = self.text
+        while self.RE_USERNAME.search(text):
+            text = re.sub(self.RE_USERNAME, "", text)
+        return Tweet(self.timestamp, self.username, text.strip())
+
+    def remove_retweets(self):
+        "Remove RT: retweets from the given text"
+        text = self.text
+        while self.RE_RETWEET.search(text):
+            text = re.sub(self.RE_RETWEET, "", text)
+        return Tweet(self.timestamp, self.username, text.strip())
+
+    def remove_urls(self):
+        "Remove urls from the given text"
+        text = self.text
+        while self.RE_URLS.search(text):
+            text = re.sub(self.RE_URLS, "", text)
+        return Tweet(self.timestamp, self.username, text.strip())
