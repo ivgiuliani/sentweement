@@ -9,6 +9,7 @@ from sentweement import datareader
 from sentweement import learning
 from sentweement import tweet
 
+
 class TestTweets(unittest.TestCase):
     def testUsernameRemoval(self):
         tests = (
@@ -82,7 +83,7 @@ class TestReader(unittest.TestCase):
         f1 = os.path.join(self.tmpdir, "data1")
         f2 = os.path.join(self.tmpdir, "data2")
         f3 = os.path.join(self.tmpdir, "data3")
-        self.filenames = [ f1, f2, f3 ]
+        self.filenames = [f1, f2, f3]
 
         writer = csv.writer(open(f1, "w"))
         writer.writerow([0, "1234567", "author1", "text1"])
@@ -112,8 +113,8 @@ class TestReader(unittest.TestCase):
             sentiment, tweet = item
             authors.append(tweet.username)
             text.append(tweet.text)
-        self.assertEqual(authors, [ "author%d" % i for i in range(1, 10) ])
-        self.assertEqual(text, [ "text%d" % i for i in range(1, 10) ])
+        self.assertEqual(authors, ["author%d" % i for i in range(1, 10)])
+        self.assertEqual(text, ["text%d" % i for i in range(1, 10)])
 
     def testSentimentIsInteger(self):
         "Sentiment value must be converted to integers"

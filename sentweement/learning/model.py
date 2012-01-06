@@ -10,10 +10,11 @@ try:
 except ImportError:
     import pickle
 
+
 class SentimentModel(object):
     "Sentiment classifier for tweets"
     SNT_POSITIVE = 1
-    SNT_NEUTRAL  = 0
+    SNT_NEUTRAL = 0
     SNT_NEGATIVE = -1
 
     def __init__(self, model=None, feature_extractors=None):
@@ -70,7 +71,7 @@ class ModelEvaluator(object):
     def __init__(self, model, datasets):
         self.model = model
         if not isinstance(datasets, (list, tuple)):
-            datasets = [ datasets ]
+            datasets = [datasets]
         self.datasets = datasets
         self.gold, self.test = None, None
         self.sentiment_eval_cache = {
@@ -106,9 +107,9 @@ class ModelEvaluator(object):
 
     def evaluate(self):
         eval_summary = {}
-        for sentiment in [ SentimentModel.SNT_POSITIVE,
-                           SentimentModel.SNT_NEUTRAL,
-                           SentimentModel.SNT_NEGATIVE ]:
+        for sentiment in [SentimentModel.SNT_POSITIVE,
+                          SentimentModel.SNT_NEUTRAL,
+                          SentimentModel.SNT_NEGATIVE]:
             tp, tn, fp, fn = self.evaluate_wrt_sentiment(sentiment)
             precision = self.calc_precision(tp, tn, fp, fn)
             recall = self.calc_recall(tp, tn, fp, fn)
@@ -190,4 +191,3 @@ class ModelEvaluator(object):
     def calc_fmeasure(self, precision, recall):
         "Calculate the f-measure for the given precision and recall"
         return (2 * precision * recall) / (precision + recall)
-
