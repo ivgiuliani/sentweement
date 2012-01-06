@@ -123,8 +123,9 @@ class EvaluateCommand(BaseCommand):
 
         labels = TEXT_LABELS.values()
         print("                TP     FP     TN     FP  precision  recall  f-measure")
+        rowstr = "%(label)s %(tp)6s %(tn)6s %(fp)6s %(fn)6s  %(precision)2.5f   %(recall)2.5f   %(fmeasure)2.5f"
         for label in labels:
-            out = "%(label)s %(tp)6d %(tn)6d %(fp)6d %(fn)6d  %(precision)2.5f   %(recall)2.5f   %(fmeasure)2.5f" % {
+            print(rowstr % {
                 "label": '%s:' % label.rjust(10),
                 "tp": summary[label]["true-positives"],
                 "fp": summary[label]["false-positives"],
@@ -133,7 +134,18 @@ class EvaluateCommand(BaseCommand):
                 "precision": summary[label]["precision"],
                 "recall": summary[label]["recall"],
                 "fmeasure": summary[label]["f-measure"],
-            }
-            print(out)
+            })
+
+        avg_precision = sum([summary[label]["precision"] for label in labels]) / len(labels)
+        avg_recall = sum([summary[label]["recall"] for label in labels]) / len(labels)
+        avg_fmeasure = sum([summary[label]["f-measure"] for label in labels]) / len(labels)
+
+        print(rowstr % {
+            "label": "average:".rjust(11),
+            "tp": "", "fp": "", "tn": "", "fn": "",
+            "precision": avg_precision,
+            "recall": avg_recall,
+            "fmeasure": avg_fmeasure,
+        })
 
         return False
