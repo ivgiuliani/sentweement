@@ -12,17 +12,19 @@ def get_version():
 
 setup(  name=get_name(),
         version=get_version(),
-        description="Twitter sentiment analysis tool",
+        description="Twitter sentiment analysis toolkit",
         author="Ivan Giuliani",
         author_email="giuliani.v@gmail.com",
         url="http://zeta-puppis.com",
-        platforms=[ 'Unix', 'Linux', 'Mac OS' ],
+        platforms=[ "Unix", "Linux", "Mac OS" ],
 
         # use MANIFEST.in to generate a comprehensive list of files
         # to include in the final package
         packages=[
             "sentweement",
             "sentweement.commands",
+            "sentweement.learning",
+            "sentweement.learning.models",
         ],
         scripts=[
             "bin/sentweement",
@@ -32,7 +34,9 @@ setup(  name=get_name(),
         install_requires=[
             "nltk",
             "tweepy>=1.8",
-            "cld",
+            # the chromium compact-language-detector is available at
+            # http://code.google.com/p/chromium-compact-language-detector/
+            # "cld",
         ],
         classifiers=[
             "Development Status :: 4 - Beta",
