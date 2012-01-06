@@ -112,7 +112,7 @@ class EvaluateCommand(BaseCommand):
         summary = evaluator.evaluate()
         precision_sum, recall_sum, fmeasure_sum = 0, 0, 0
 
-        print("                TP     FP     TN     FP  precision  recall  f-measure")
+        print("                TP     TN     FP     FN  precision  recall  f-measure")
         rowstr = "%(label)s %(tp)6s %(tn)6s %(fp)6s %(fn)6s  %(precision)2.5f   %(recall)2.5f   %(fmeasure)2.5f"
         for sentiment, label in TEXT_LABELS.items():
             print(rowstr % {
