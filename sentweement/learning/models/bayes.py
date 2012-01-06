@@ -4,6 +4,7 @@ from collections import defaultdict
 
 import nltk
 
+
 class NaiveBayesModel(base.ModelBase):
     def __init__(self, *args, **kwargs):
         base.ModelBase.__init__(self, *args, **kwargs)
@@ -30,21 +31,20 @@ class NaiveBayesModel(base.ModelBase):
         for label in self.label_freqdist:
             num_samples = self.label_freqdist[label]
             for fname in self.feature_names:
-                count = self.feature_freqdist[label, fname].N()
-                self.feature_freqdist[label, fname].inc(None, num_samples-count)
+                f_freqdist = self.feature_freqdist[label, fname]
+                f_freqdist.inc(None, num_samples - f_freqdist.N())
                 self.feature_values[fname].add(None)
 
     def get_classifier(self):
         label_probdist = self.estimator(self.label_freqdist)
         feature_probdist = {}
         for ((label, fname), freqdist) in self.feature_freqdist.iteritems():
-            probdist = self.estimator(freqdist, bins=len(self.feature_values[fname]))
-            feature_probdist[label,fname] = probdist
+            probdist = self.estimator(
+                            freqdist, bins=len(self.feature_values[fname]))
+            feature_probdist[label, fname] = probdist
 
         return nltk.NaiveBayesClassifier(label_probdist, feature_probdist)
-
 
     def predict(self, tweet):
         classifier = self.get_classifier()
         return int(classifier.classify(self.extract_features(tweet)))
-
