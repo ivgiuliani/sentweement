@@ -54,8 +54,9 @@ class PredictBatchCommand(BaseCommand):
         reader = DataReader(filenames)
 
         print("Prediction:")
-        for tweet in reader.get_tweets():
-            label = text_labels[model.predict(text)]
+        for item in reader.get_tweets():
+            sentiment, tweet = item
+            label = text_labels[model.predict(tweet)]
             print(" %10s: %s" % (label, tweet["text"]))
 
         return False
@@ -79,8 +80,9 @@ class EvaluateCommand(BaseCommand):
         reader = DataReader(filenames)
 
         gold, test = [], []
-        for tweet in reader.get_tweets():
-            gold.append(int(tweet["sentiment"]))
+        for item in reader.get_tweets():
+            sentiment, tweet = item
+            gold.append(sentiment)
             test.append(model.predict(tweet))
 
         print("Confusion matrix:")

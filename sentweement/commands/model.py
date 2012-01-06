@@ -15,8 +15,9 @@ class CreateModelCommand(BaseCommand):
         model = SentimentModel()
         reader = DataReader(filenames)
 
-        for tweet in reader.get_tweets():
-            model.fit(tweet)
+        for item in reader.get_tweets():
+            sentiment, tweet = item
+            model.fit(tweet, sentiment)
 
         return model
 
@@ -36,6 +37,7 @@ class CreateModelCommand(BaseCommand):
 
         return False
 
+
 class UpdateModelCommand(BaseCommand):
     """
     Update a new sentiment model using the given datasets as input.
@@ -46,8 +48,9 @@ class UpdateModelCommand(BaseCommand):
         model = SentimentModel.load(model_file)
         reader = DataReader(filenames)
 
-        for tweet in reader.get_tweets():
-            model.fit(tweet)
+        for item in reader.get_tweets():
+            sentiment, tweet = item
+            model.fit(tweet, sentiment)
 
         return model
 

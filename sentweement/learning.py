@@ -39,33 +39,15 @@ class SentimentModel(object):
         fd.close()
         return model
 
-    def tokenize(self, text):
-        """Splits a sentence into tokens
-
-        This also takes in account twitter particular features,
-        as @usernames and #hashtags by joining adjacent tokens
-        when it makes sense so that for example '@' and 'username' are
-        always a single token
-        """
-
-        nltk_tokens = nltk.wordpunct_tokenize(text)
-        tokens = []
-        for tok1, tok2 in zip(nltk_tokens, nltk_tokens[1:]):
-            if tok1 in self.TWITTER_CHARS:
-                tokens.append(tok1 + tok2)
-            elif tok2 not in self.TWITTER_CHARS:
-                tokens.append(tok2) 
-
-        if len(nltk_tokens) > 0 and nltk_tokens[0] not in self.TWITTER_CHARS:
-            tokens = [ nltk_tokens[0] ] + tokens
-        return tokens
-
-    def extract_features(self, text):
+    def extract_features(self, tweet_obj):
         "Extracts a set of features from the given tweet"
-        text = tweet.fix(text)
-        text = tweet.remove_urls(text)
+        text = tweet_obj.fix() \
+                        .remove_urls() \
+                        .remove_usernames() \
+                        .remove_retweets() \
+                        .text
 
-        tokens = self.tokenize(text)
+        tokens = nltk.wordpunct_tokenize(text)
         features = {}
 
         for token in tokens:
@@ -82,18 +64,16 @@ class SentimentModel(object):
 
         return features
 
-    def fit(self, tweet_obj):
+    def fit(self, tweet_obj, sentiment):
         """
         Updates the model by adding the given tweet with the tagged
         sentiment label. The sentiment must be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
-        sentiment = int(tweet_obj["sentiment"])
-
         # the following implementation is mostly copied from
         # nltk.NaiveBayesClassifier.train, but allows for incremental
         # training over the dataset
-        features = self.extract_features(tweet_obj["text"])
+        features = self.extract_features(tweet_obj)
         self.label_freqdist.inc(sentiment)
 
         for fname, fval in features.iteritems():
@@ -125,10 +105,4 @@ class SentimentModel(object):
         The predicted sentiment will be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
-        if isinstance(tweet_obj, (str, unicode)):
-            # allow direct text passing for easier testing
-            text = tweet_obj
-        else:
-            text = tweet_obj["text"]
-
-        return self.get_classifier().classify(self.extract_features(text))
+        return self.get_classifier().classify(self.extract_features(tweet_obj))
