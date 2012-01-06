@@ -1,3 +1,5 @@
+from sentweement import tweet
+
 import csv
 import os
 
@@ -16,7 +18,10 @@ class DataReader(object):
                 raise IOError(err % filename)
 
     def get_tweets(self):
-        "Iterates over the whole list of tweets available"
+        """
+        Iterates over the whole list of tweets available and returns
+        a tuple like (sentiment_label, tweet instance) for each entry
+        """
         for filename in self.__filenames:
             if self.__file_changed_callback:
                 self.__file_changed_callback(filename)
@@ -25,12 +30,10 @@ class DataReader(object):
 
             for row in reader:
                 sentiment, time, author, text = row
-                yield {
-                    "sentiment": sentiment,
-                    "time": time,
-                    "author": author,
-                    "text": text,
-                }
+                yield (
+                    sentiment,
+                    tweet.Tweet(time, author, text),
+                )
 
         raise StopIteration
 

@@ -108,9 +108,10 @@ class TestReader(unittest.TestCase):
     def testDataIteration(self):
         reader = datareader.DataReader(self.filenames)
         authors, text = [], []
-        for tweet in reader.get_tweets():
-            authors.append(tweet["author"])
-            text.append(tweet["text"])
+        for item in reader.get_tweets():
+            sentiment, tweet = item
+            authors.append(tweet.username)
+            text.append(tweet.text)
         self.assertEqual(authors, [ "author%d" % i for i in range(1, 10) ])
         self.assertEqual(text, [ "text%d" % i for i in range(1, 10) ])
 
