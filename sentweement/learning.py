@@ -41,11 +41,11 @@ class SentimentModel(object):
 
     def extract_features(self, tweet_obj):
         "Extracts a set of features from the given tweet"
-        text = tweet_obj.fix() \
-                        .remove_urls() \
-                        .remove_usernames() \
-                        .remove_retweets() \
-                        .text
+        text = (tweet_obj.fix()
+                         .remove_urls()
+                         .remove_usernames()
+                         .remove_retweets()
+                         .text)
 
         tokens = nltk.wordpunct_tokenize(text)
         features = {}
