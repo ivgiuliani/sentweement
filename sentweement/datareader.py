@@ -1,14 +1,17 @@
 from sentweement import tweet
 
 import csv
+import sys
 import os
 
 class DataReader(object):
     "Performs unified data reading over a set of given tweet dumps"
 
-    def __init__(self, filenames=None, file_changed_callback=None):
+    def __init__(self, filenames=None, on_file_start_cb=None,
+                                       on_file_stop_cb=None):
         self.__filenames = filenames or []
-        self.__file_changed_callback = file_changed_callback
+        self.__on_file_start_cb = on_file_start_cb
+        self.__on_file_stop_cb = on_file_stop_cb
 
         for filename in self.__filenames:
             if not self.__files_exist(self.__filenames):
@@ -23,17 +26,21 @@ class DataReader(object):
         a tuple like (sentiment_label, tweet instance) for each entry
         """
         for filename in self.__filenames:
-            if self.__file_changed_callback:
-                self.__file_changed_callback(filename)
+            if self.__on_file_start_cb:
+                self.__on_file_start_cb(filename)
 
             reader = csv.reader(open(filename, "rb"))
-
-            for row in reader:
+            for lineno, row in enumerate(reader):
                 sentiment, time, author, text = row
-                yield (
-                    int(sentiment),
-                    tweet.Tweet(time, author, text),
-                )
+                try:
+                    ret = (int(sentiment), tweet.Tweet(time, author, text))
+                except ValueError:
+                    sys.stderr.write("WARNING: malformed line no. %d" % (lineno + 1))
+                    continue
+                yield ret
+
+            if self.__on_file_stop_cb:
+                self.__on_file_stop_cb(filename)
 
         raise StopIteration
 
