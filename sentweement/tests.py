@@ -8,9 +8,10 @@ import unittest
 from sentweement import datareader
 from sentweement import learning
 from sentweement import tweet
+from sentweement.learning import preprocessors
 
 
-class TestTweets(unittest.TestCase):
+class TestPreprocessors(unittest.TestCase):
     def testUsernameRemoval(self):
         tests = (
             # full text, expected text
@@ -22,7 +23,7 @@ class TestTweets(unittest.TestCase):
 
         for test, expected_value in tests:
             t = tweet.Tweet(123456789, "username", test)
-            self.assertEqual(t.remove_usernames().text, expected_value)
+            self.assertEqual(preprocessors.remove_usernames(t).text, expected_value)
 
     def testRetweetRemoval(self):
         tests = (
@@ -33,7 +34,7 @@ class TestTweets(unittest.TestCase):
 
         for test, expected_value in tests:
             t = tweet.Tweet(123456789, "username", test)
-            self.assertEqual(t.remove_retweets().text, expected_value)
+            self.assertEqual(preprocessors.remove_retweets(t).text, expected_value)
 
     def testUrlRemoval(self):
         tests = (
@@ -46,7 +47,7 @@ class TestTweets(unittest.TestCase):
 
         for test, expected_value in tests:
             t = tweet.Tweet(123456789, "username", test)
-            self.assertEqual(t.remove_urls().text, expected_value)
+            self.assertEqual(preprocessors.remove_urls(t).text, expected_value)
 
     def testTweetFix(self):
         tests = (
@@ -58,7 +59,7 @@ class TestTweets(unittest.TestCase):
 
         for test, expected_value in tests:
             t = tweet.Tweet(123456789, "username", test)
-            self.assertEqual(t.fix().text, expected_value)
+            self.assertEqual(preprocessors.remap_characters(t).text, expected_value)
 
     def testEditChain(self):
         tests = (
@@ -71,10 +72,17 @@ class TestTweets(unittest.TestCase):
 
         for test, expected_value in tests:
             t = tweet.Tweet(123456789, "username", test)
-            self.assertEqual(t.fix()
-                              .remove_usernames()
-                              .remove_urls()
-                              .remove_retweets().text, expected_value)
+
+            preprocessors_list = [
+                preprocessors.remap_characters,
+                preprocessors.remove_usernames,
+                preprocessors.remove_urls,
+                preprocessors.remove_retweets
+            ]
+            for preprocessor in preprocessors_list:
+                t = preprocessor(t)
+
+            self.assertEqual(t.text, expected_value)
 
 
 class TestReader(unittest.TestCase):

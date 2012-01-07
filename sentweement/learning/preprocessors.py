@@ -1,4 +1,5 @@
 # -!-: coding: utf-8
+from sentweement.tweet import Tweet
 
 import re
 
