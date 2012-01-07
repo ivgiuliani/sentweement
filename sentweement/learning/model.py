@@ -110,6 +110,7 @@ class ModelEvaluator(object):
             # than one place and doesn't change unless the dataset
             # changes (and thus the class is initialized again)
             reader = DataReader(self.datasets)
+            self.gold, self.test = [], []
             for item in reader.get_tweets():
                 sentiment, tweet = item
                 self.gold.append(sentiment)
