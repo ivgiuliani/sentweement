@@ -1,5 +1,4 @@
 from sentweement import settings
-from sentweement import tweet
 from sentweement.datareader import DataReader
 from sentweement.learning import features
 
@@ -17,9 +16,12 @@ class SentimentModel(object):
     SNT_NEUTRAL = 0
     SNT_NEGATIVE = -1
 
-    def __init__(self, model=None, feature_extractors=None):
+    def __init__(self, model=None, preprocessors=None, feature_extractors=None):
         model = model or settings.PREDICTION_MODEL
+        preprocessors = preprocessors or settings.PREPROCESSORS
         feature_extractors = feature_extractors or settings.FEATURE_EXTRACTORS
+
+        self.preprocessors = preprocessors
         self.feature_extractors = feature_extractors
 
         if inspect.isclass(model):
@@ -32,6 +34,7 @@ class SentimentModel(object):
         "Serializes the current model to the specified file"
         save_obj = {
             "model": self.model,
+            "preprocessors": self.preprocessors,
             "feature_extractors": self.feature_extractors,
         }
         fd = open(filename, "wb")
@@ -48,7 +51,17 @@ class SentimentModel(object):
         feature_extractors = load_obj["feature_extractors"]
         model = load_obj["model"]
 
-        return SentimentModel(model, feature_extractors)
+        return SentimentModel(model, preprocessors, feature_extractors)
+    
+    def preprocess(self, tweet_obj):
+        """
+        Run the set of defined tweet preprocessors and return the
+        resulting tweet.
+        """
+        new_tweet = tweet_obj
+        for preprocessor in self.preprocessors:
+            new_tweet = preprocessor(new_tweet)
+        return new_tweet
 
     def fit(self, tweet_obj, sentiment):
         """
@@ -56,6 +69,7 @@ class SentimentModel(object):
         sentiment label. The sentiment must be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
+        tweet_obj = self.preprocess(tweet_obj)
         self.model.fit(tweet_obj, sentiment)
 
     def predict(self, tweet_obj):
@@ -64,6 +78,7 @@ class SentimentModel(object):
         The predicted sentiment will be one of SNT_POSITIVE,
         SNT_NEGATIVE or SNT_NEUTRAL.
         """
+        tweet_obj = self.preprocess(tweet_obj)
         return self.model.predict(tweet_obj)
 
 

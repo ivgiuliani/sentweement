@@ -5,12 +5,7 @@ ALPHABET = "abcdefghijklmnopqrstuwxyz"
 
 def extract_unigrams(tweet):
     "Extracts unigrams from the given tweet"
-    text = (tweet.fix()
-                 .remove_urls()
-                 .remove_usernames()
-                 .remove_retweets()
-                 .text
-                 .lower())
+    text = tweet.text
 
     tokens = nltk.wordpunct_tokenize(text)
     tokens = [token for token in tokens if token not in ALPHABET]
@@ -24,12 +19,7 @@ def extract_unigrams(tweet):
 
 def extract_bigrams(tweet):
     "Extracts bigrams from the given tweet"
-    text = (tweet.fix()
-                 .remove_urls()
-                 .remove_usernames()
-                 .remove_retweets()
-                 .text
-                 .lower())
+    text = tweet.text
 
     tokens = nltk.wordpunct_tokenize(text)
     tokens = [token for token in tokens if token not in ALPHABET]
