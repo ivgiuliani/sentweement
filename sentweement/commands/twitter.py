@@ -116,6 +116,13 @@ class SearchTweetsCommand(BaseCommand):
 
 
 class RealtimePredictionCommand(BaseCommand):
+    """
+    Show the real-time stream of tweets that match the given keywords
+    for the specified language code (i.e.: 'en' or 'it') and automatically
+    tries to predict the sentiment outcome for each of them using the
+    pre-trained model in input..
+    """
+
     def __init__(self, *args, **kwargs):
         BaseCommand.__init__(self, *args, **kwargs)
         self.model = None
