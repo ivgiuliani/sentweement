@@ -48,6 +48,7 @@ class SentimentModel(object):
         load_obj = pickle.load(fd)
         fd.close()
 
+        preprocessors = load_obj["preprocessors"]
         feature_extractors = load_obj["feature_extractors"]
         model = load_obj["model"]
 

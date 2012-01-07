@@ -36,6 +36,11 @@ VALID_COMMANDS = {
         "params": "<model> <input dataset 1> [... <input dataset N>]",
         "module": prediction.PredictBatchCommand,
     },
+    "twitter-predict-realtime": {
+        "help": "Predict the sentiment for real time searches",
+        "params": "<model> <language code> [<search term 1> ... <search term N>]",
+        "module": twitter.RealtimePredictionCommand,
+    },
     "twitter-search": {
         "help": "Show the current stream of tweets that matches the search terms",
         "params": "<language code> [<search term 1> ... <search term N>]",
