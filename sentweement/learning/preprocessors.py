@@ -6,6 +6,10 @@ RE_USERNAME = re.compile(r"@\w+[:,;! ]*")
 RE_RETWEET = re.compile(r"RT[:, ]*")
 RE_URLS = re.compile(r"([\w-]+://[\w.-/]+|www.[\w.-/]+)[ ]*")
 
+def convert_to_lowercase(tweet):
+    "Convert a tweet to an equivalent lowercase representation"
+    return Tweet(tweet.tid, tweet.username, tweet.text.lower())
+
 
 def remap_characters(tweet):
     """Fix a tweet by converting it in a proper and equivalent text

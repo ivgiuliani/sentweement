@@ -14,6 +14,7 @@ PREPROCESSORS = [
     preprocessors.remove_usernames,
     preprocessors.remove_retweets,
     preprocessors.remove_urls,
+    preprocessors.convert_to_lowercase,
 ]
 
 from sentweement.learning import features
