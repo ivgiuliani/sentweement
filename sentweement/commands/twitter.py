@@ -159,3 +159,4 @@ class RealtimePredictionCommand(BaseCommand):
             sentiment = self.model.predict(tweet)
             sentiment = ("[%s] " % TEXT_LABELS[sentiment]).rjust(11)
             print "%s %s: %s" % (sentiment, author.rjust(15), text)
+        return True
