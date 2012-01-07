@@ -162,8 +162,10 @@ class RealtimePredictionCommand(BaseCommand):
         lang = language.get_language(text)
         if lang[1] == filter_language:
             tweet = Tweet(status.id_str, author, text)
-
             sentiment = self.model.predict(tweet)
+
+            if len(author) > 10:
+                author = "%s..." % author[:7]
             sentiment = ("[%s] " % TEXT_LABELS[sentiment]).rjust(11)
-            print "%s %s: %s" % (sentiment, author.rjust(15), text)
+            print "%s %s: %s" % (sentiment, author.rjust(10), text)
         return True
