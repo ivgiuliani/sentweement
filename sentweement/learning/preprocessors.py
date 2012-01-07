@@ -37,8 +37,8 @@ def remap_characters(tweet):
         ":d": ":-D",
         ":P": ":-p",
         ":p": ":-p",
-        ":O": ":-O", "O:", ":-O",
-        ":o": ":-O", "o:", ":-O",
+        ":O": ":-O", "O:": ":-O",
+        ":o": ":-O", "o:": ":-O",
     }
 
     text = tweet.text
