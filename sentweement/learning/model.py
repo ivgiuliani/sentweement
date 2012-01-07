@@ -84,6 +84,15 @@ class SentimentModel(object):
 
 
 class ModelEvaluator(object):
+    """
+    A commodity class for evaluating pretrained models against a given
+    dataset. It allows for different type of evaluations, mostly focusing
+    on classical precision/recall/f-measure metrics.
+    
+    It also includes a shortcut evaluate() method that runs a complete
+    evaluation over the dataset.
+    """
+
     def __init__(self, model, datasets):
         self.model = model
         if not isinstance(datasets, (list, tuple)):
