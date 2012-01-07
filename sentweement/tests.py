@@ -49,7 +49,21 @@ class TestPreprocessors(unittest.TestCase):
             t = tweet.Tweet(123456789, "username", test)
             self.assertEqual(preprocessors.remove_urls(t).text, expected_value)
 
-    def testTweetFix(self):
+    def testHashtagRemoval(self):
+        tests = (
+            # full text, expected text
+            ("#hashtag", ""),
+            ("#initial text #hashtag", "text"),
+            ("1111 #hash1 #hash2 2222", "1111   2222"),
+            ("typical #hashTag123Mixed", "typical"),
+            ("xxx #hashTag#attached", "xxx"),
+        )
+
+        for test, expected_value in tests:
+            t = tweet.Tweet(123456789, "username", test)
+            self.assertEqual(preprocessors.remove_hashtags(t).text, expected_value)
+
+    def testTweetCharRemap(self):
         tests = (
             # full text, expected text
             ("» Hello «", ">> Hello <<"),

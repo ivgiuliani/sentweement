@@ -5,7 +5,9 @@ import re
 
 RE_USERNAME = re.compile(r"@\w+[:,;! ]*")
 RE_RETWEET = re.compile(r"RT[:, ]*")
+RE_HASHTAGS = re.compile(r"#(\w+)")
 RE_URLS = re.compile(r"([\w-]+://[\w.-/]+|www.[\w.-/]+)[ ]*")
+
 
 def convert_to_lowercase(tweet):
     "Convert a tweet to an equivalent lowercase representation"
@@ -30,7 +32,13 @@ def remap_characters(tweet):
         "«": "<<",
         ":)": ":-)",
         ":(": ":-(",
+        ":@": ":-@",
         ":D": ":-D",
+        ":d": ":-D",
+        ":P": ":-p",
+        ":p": ":-p",
+        ":O": ":-O",
+        ":o": ":-O",
     }
 
     text = tweet.text
@@ -44,7 +52,7 @@ def remap_characters(tweet):
 
 
 def remove_usernames(tweet):
-    "Remove @usernames from the given text"
+    "Remove @usernames from the given tweet"
     text = tweet.text
     while RE_USERNAME.search(text):
         text = re.sub(RE_USERNAME, "", text)
@@ -52,7 +60,7 @@ def remove_usernames(tweet):
 
 
 def remove_retweets(tweet):
-    "Remove RT: retweets from the given text"
+    "Remove RT: retweets from the given tweet"
     text = tweet.text
     while RE_RETWEET.search(text):
         text = re.sub(RE_RETWEET, "", text)
@@ -60,8 +68,16 @@ def remove_retweets(tweet):
 
 
 def remove_urls(tweet):
-    "Remove urls from the given text"
+    "Remove urls from the given tweet"
     text = tweet.text
     while RE_URLS.search(text):
         text = re.sub(RE_URLS, "", text)
+    return Tweet(tweet.tid, tweet.username, text.strip())
+
+
+def remove_hashtags(tweet):
+    "Remove hashtags from the given tweet"
+    text = tweet.text
+    while RE_HASHTAGS.search(text):
+        text = re.sub(RE_HASHTAGS, "", text)
     return Tweet(tweet.tid, tweet.username, text.strip())

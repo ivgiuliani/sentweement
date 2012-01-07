@@ -10,11 +10,12 @@ PREDICTION_MODEL = models.NaiveBayesModel
 
 from sentweement.learning import preprocessors
 PREPROCESSORS = [
+    preprocessors.convert_to_lowercase,
     preprocessors.remap_characters,
     preprocessors.remove_usernames,
     preprocessors.remove_retweets,
     preprocessors.remove_urls,
-    preprocessors.convert_to_lowercase,
+    preprocessors.remove_hashtags,
 ]
 
 from sentweement.learning import features
